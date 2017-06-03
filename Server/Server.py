@@ -13,6 +13,7 @@ class Server(basic.LineReceiver):
     waiting_list = [];
 
     def connectionMade(self):
+        #what happens when somebody connects
         print ("New connection made at: " + time.strftime("%H:%M"));
         Server.clients_list.append(self);
         Server.connectedplayers = Server.connectedplayers + 1;
@@ -24,17 +25,20 @@ class Server(basic.LineReceiver):
 
 
     def __messageLIST__(self, listofusers, text):
+        #message privately everyone on the list
         for c in listofusers:
             c.transport.write(text);
 
 
     def __helloMessages__(self):
+        #a bunch of on-login messages
         self.transport.write("Welcome to Chessline. Author: Mikolaj Balcerek, s416040 \n");
         self.transport.write("Server time: " + time.strftime("%H:%M") + "\n");
         self.transport.write("Connected players: " + str(Server.connectedplayers) + "\n");
         self.transport.write("Available players for matchmaking: " + str(Server.matchmakingplayers) + "\n");
 
     def __matchMaking__(self):
+        #Find two players on a waiting list and make them play
         # Is there enough players in waiting queue
         if (Server.matchmakingplayers >= 2):
             #Preparing a shortlist of matchmade players
@@ -52,6 +56,7 @@ class Server(basic.LineReceiver):
 
 
     def connectionLost(self, reason):
+        #Handling dropped connections
         Server.connectedplayers = Server.connectedplayers - 1;
         Server.clients_list.remove(self);
         if (self in Server.waiting_list):

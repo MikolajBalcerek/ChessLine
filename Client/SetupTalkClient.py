@@ -3,6 +3,7 @@ import socket;
 address = 0;
 portnumber = 8080;
 
+
 def converse_initial_setup():
     print "Setting up the client..";
     address = raw_input("Name the ip address you wish to connect to \n");

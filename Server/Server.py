@@ -1,29 +1,28 @@
-import socket
-import sys
+from twisted.internet import reactor, protocol
+import time;
 
-class Server:
-    def Server(self, ip, portnumber):
-        # Create a TCP/IP socket
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+class Server(protocol.Protocol):
+    """This is just about the simplest possible protocol"""
 
-        # Bind the socket to the address given on the command line
-        server_name = ip
-        server_address = (server_name, portnumber)
-        print >> sys.stderr, 'starting up on %s port %s' % server_address
-        sock.bind(server_address)
-        sock.listen(1)
+    connectedplayers = 0;
+    playingplayers = 0;
 
-        while True:
-            print >> sys.stderr, 'waiting for a connection'
-            connection, client_address = sock.accept()
-            try:
-                print >> sys.stderr, 'client connected:', client_address
-                while True:
-                    data = connection.recv(16)
-                    print >> sys.stderr, 'received "%s"' % data
-                    if data:
-                        connection.sendall(data)
-                    else:
-                        break
-            finally:
-                connection.close()
+    def connectionMade(self):
+        print ("New connection made at: " + time.strftime("%H:%M"));
+        Server.connectedplayers = Server.connectedplayers + 1;
+        self.__helloMessages__();
+
+    def __helloMessages__(self):
+        self.transport.write("Welcome to Chessline. Author: Mikolaj Balcerek, s416040 \n");
+        self.transport.write("Server time: " + time.strftime("%H:%M") + "\n");
+        self.transport.write("Connected players: " + str(Server.connectedplayers) + "\n");
+        self.transport.write("Available players for matchmaking: " + str(Server.connectedplayers - Server.playingplayers) + "\n");
+
+    def connectionLost(self, reason):
+        Server.connectedplayers = Server.connectedplayers - 1;
+        print ("Connection Lost");
+
+    #def dataReceived(self, data):
+    #    "As soon as any data is received, write it back."
+     #   self.transport.write("Welcome to Chessline. Mikolaj Balcerek, s416040");
+     #   print ("Server time: " +  time.strftime("%H:%M"));

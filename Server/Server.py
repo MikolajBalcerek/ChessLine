@@ -2,6 +2,7 @@ from twisted.internet import reactor, protocol
 from twisted.protocols import basic
 import time;
 import __mainSERVER__;
+import Chessgame;
 
 class Server(basic.LineReceiver):
     """This is just about the simplest possible protocol"""
@@ -11,10 +12,11 @@ class Server(basic.LineReceiver):
     matchmakingplayers = 0;
     clients_list = [];
     waiting_list = [];
+    games_list = [];
 
     def connectionMade(self):
         #what happens when somebody connects
-        print ("New connection made at: " + time.strftime("%H:%M"));
+        print (time.strftime("%H:%M") + " New connection made at: ");
         Server.clients_list.append(self);
         Server.connectedplayers = Server.connectedplayers + 1;
         Server.matchmakingplayers = Server.connectedplayers - Server.playingplayers;
@@ -53,12 +55,15 @@ class Server(basic.LineReceiver):
 
             #Messaging players that a game has been found
             self.__messageLIST__(__twoplayers__, "Found a pair.. Connecting");
-            print ("Matchmaking two players..");
+            print (time.strftime("%H:%M") + " Matchmaking two players..");
 
             #Sending over the command codes to initialize game modes on clients
             self.clearLineBuffer();
-            __twoplayers__[0].sendLine("GAMEMODE");
-            __twoplayers__[1].sendLine("GAMEMODE");
+            self.__messageLIST__(__twoplayers__, "GAMEMODE");
+            idnumber = len(Server.games_list);
+            Server.games_list.append(Chessgame.Chessgame(self, __twoplayers__, idnumber));
+            print (time.strftime("%H:%M") + " Hosted a game. ID = " + str(idnumber));
+
         else:
             #Not enough players, you have to wait!
             self.sendLine("Please wait to be matched with another player");

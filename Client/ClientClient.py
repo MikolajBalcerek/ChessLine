@@ -3,6 +3,7 @@ from twisted.internet import reactor, protocol
 from twisted.protocols import basic
 import SetupTalkClient;
 import ClientFactory
+import GameMode;
 import time;
 
 class ClientClient(basic.LineReceiver):
@@ -12,10 +13,18 @@ class ClientClient(basic.LineReceiver):
         #print "Connected to the server";
         print ("Successful connection");
 
-    def dataReceived(self, data):
-        "As soon as any data is received, write it back."
-        print(time.strftime("%H:%M Server:  ") + data)
-        #self.transport.loseConnection()
+    def lineReceived(self, line):
+        if (str(line) == "GAMEMODE"):
+            GameMode.initialize();
+        else:
+            print(time.strftime("%H:%M Server:  ") + line);
+
+
+
+    #def dataReceived(self, data):
+      #  print(time.strftime("%H:%M Server:  ") + data)
+      #  self.clearLineBuffer();
+        #self.transport.loseConnection():
 
     def connectionLost(self, reason):
         print("connection lost")

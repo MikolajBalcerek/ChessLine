@@ -19,7 +19,7 @@ class Server(basic.LineReceiver):
         Server.connectedplayers = Server.connectedplayers + 1;
         Server.matchmakingplayers = Server.connectedplayers - Server.playingplayers;
         self.__helloMessages__()
-        self.__messageLIST__(Server.waiting_list, "New player has connected and wants to play! \n");
+        self.__messageLIST__(Server.waiting_list, "New player has connected and wants to play!");
         Server.waiting_list.append(self);
         self.__matchMaking__();
 
@@ -27,32 +27,41 @@ class Server(basic.LineReceiver):
     def __messageLIST__(self, listofusers, text):
         #message privately everyone on the list
         for c in listofusers:
-            c.transport.write(text);
+            c.sendLine(text);
 
 
     def __helloMessages__(self):
         #a bunch of on-login messages
-        self.transport.write("Welcome to Chessline. Author: Mikolaj Balcerek, s416040 \n");
-        self.transport.write("Server time: " + time.strftime("%H:%M") + "\n");
-        self.transport.write("Connected players: " + str(Server.connectedplayers) + "\n");
-        self.transport.write("Available players for matchmaking: " + str(Server.matchmakingplayers) + "\n");
+        self.sendLine("Welcome to Chessline. Author: Mikolaj Balcerek, s416040");
+        self.sendLine("Server time: " + time.strftime("%H:%M"));
+        self.sendLine("Connected players: " + str(Server.connectedplayers));
+        self.sendLine("Available players for matchmaking: " + str(Server.matchmakingplayers));
 
     def __matchMaking__(self):
         #Find two players on a waiting list and make them play
         # Is there enough players in waiting queue
         if (Server.matchmakingplayers >= 2):
+
             #Preparing a shortlist of matchmade players
             __twoplayers__ = [];
             __twoplayers__.append(Server.waiting_list.pop(0));
             __twoplayers__.append(Server.waiting_list.pop(0));
+
             #Maintaining lists and numbers
             Server.playingplayers = Server.playingplayers + 2;
             Server.matchmakingplayers = Server.matchmakingplayers - 2;
+
             #Messaging players that a game has been found
-            self.__messageLIST__(__twoplayers__, "\n\nFound a pair.. Connecting \n");
+            self.__messageLIST__(__twoplayers__, "Found a pair.. Connecting");
+            print ("Matchmaking two players..");
+
+            #Sending over the command codes to initialize game modes on clients
+            self.clearLineBuffer();
+            __twoplayers__[0].sendLine("GAMEMODE");
+            __twoplayers__[1].sendLine("GAMEMODE");
         else:
             #Not enough players, you have to wait!
-            self.transport.write("Please wait to be matched with another player" + "\n");
+            self.sendLine("Please wait to be matched with another player");
 
 
     def connectionLost(self, reason):

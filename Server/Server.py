@@ -70,6 +70,7 @@ class Server(basic.LineReceiver):
         Server.clients_list.remove(self);
         if (self in Server.waiting_list):
             Server.waiting_list.remove(self);
+            Server.matchmakingplayers = Server.matchmakingplayers - 1;
         print ("Connection Lost");
 
 

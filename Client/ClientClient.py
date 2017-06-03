@@ -17,7 +17,7 @@ class ClientClient(basic.LineReceiver):
         if (str(line) == "GAMEMODE"):
             GameMode.initialize();
         else:
-            print(time.strftime("%H:%M Server:  ") + line);
+            print(time.strftime("%H:%M Server: ") + line);
 
 
 

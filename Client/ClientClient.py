@@ -1,10 +1,11 @@
 from __future__ import print_function
 from twisted.internet import reactor, protocol
+from twisted.protocols import basic
 import SetupTalkClient;
 import ClientFactory
 import time;
 
-class ClientClient(protocol.Protocol):
+class ClientClient(basic.LineReceiver):
     """Once connected, send a message, then print the result."""
 
     def connectionMade(self):

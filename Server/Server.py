@@ -7,16 +7,17 @@ import Chessgame;
 class Server(basic.LineReceiver):
     """This is just about the simplest possible protocol"""
 
-    connectedplayers = 0;
-    playingplayers = 0;
-    matchmakingplayers = 0;
-    clients_list = [];
-    waiting_list = [];
-    games_list = [];
+    connectedplayers = 0; #number of connected players overall
+    playingplayers = 0; #players currently in games
+    matchmakingplayers = 0; #players waiting to be matched for a game
+    clients_list = []; #list of all players connected
+    waiting_list = []; #list of players waiting to be matched
+    games_list = []; #list of all games
+    playing_list = [[]]; #list of all players playing in games with ids of games they are in
 
     def connectionMade(self):
         #what happens when somebody connects
-        print (time.strftime("%H:%M") + " New connection made at: ");
+        print (time.strftime("%H:%M") + " New connection made");
         Server.clients_list.append(self);
         Server.connectedplayers = Server.connectedplayers + 1;
         Server.matchmakingplayers = Server.connectedplayers - Server.playingplayers;
@@ -44,39 +45,82 @@ class Server(basic.LineReceiver):
         # Is there enough players in waiting queue
         if (Server.matchmakingplayers >= 2):
 
-            #Preparing a shortlist of matchmade players
+            print (time.strftime("%H:%M") + " Matchmaking two players..");
+            #Creating a shortlist of matched players at the moment
             __twoplayers__ = [];
             __twoplayers__.append(Server.waiting_list.pop(0));
             __twoplayers__.append(Server.waiting_list.pop(0));
 
-            #Maintaining lists and numbers
-            Server.playingplayers = Server.playingplayers + 2;
+
+            #Maintaining numbers of players
             Server.matchmakingplayers = Server.matchmakingplayers - 2;
 
             #Messaging players that a game has been found
             self.__messageLIST__(__twoplayers__, "Found a pair.. Connecting");
-            print (time.strftime("%H:%M") + " Matchmaking two players..");
 
-            #Sending over the command codes to initialize game modes on clients
-            self.clearLineBuffer();
-            self.__messageLIST__(__twoplayers__, "GAMEMODE");
-            idnumber = len(Server.games_list);
-            Server.games_list.append(Chessgame.Chessgame(self, __twoplayers__, idnumber));
-            print (time.strftime("%H:%M") + " Hosted a game. ID = " + str(idnumber));
-
+            self.__makeGame__(__twoplayers__);
         else:
             #Not enough players, you have to wait!
             self.sendLine("Please wait to be matched with another player");
 
 
+    def __makeGame__(self, __twoplayers__):
+        #Makes the game given list of any free two players
+
+        #Maintaining numbers
+        Server.playingplayers = Server.playingplayers + 2;
+
+        # Sending over the command codes to initialize game modes on clients
+        self.clearLineBuffer();
+        self.__messageLIST__(__twoplayers__, "GAMEMODE");
+
+        # Server logs and figuring out game's id
+        idnumber = len(Server.games_list);
+        print (time.strftime("%H:%M") + " Hosted a game. ID = " + str(idnumber));
+
+        # Adding players to playing players list with the game's id
+        self.playing_list.append([__twoplayers__[0] , idnumber]);
+        self.playing_list.append([__twoplayers__[1], idnumber]);
+
+        #running the game
+        Server.games_list.append(Chessgame.Chessgame(self, __twoplayers__, idnumber));
+
+
+
     def connectionLost(self, reason):
         #Handling dropped connections
+
+        #Maintaining numbers and lists of ALL connected players
         Server.connectedplayers = Server.connectedplayers - 1;
         Server.clients_list.remove(self);
+
+        #Disconnected player was in a waiting list
         if (self in Server.waiting_list):
             Server.waiting_list.remove(self);
             Server.matchmakingplayers = Server.matchmakingplayers - 1;
+
+        #Disconnected player was in a game
+        if (self in self.playing_list):
+            #find the game's id
+            index = self.playing_list.index(self);
+            gameid = self.playing_list[index][0];
+
+            #inform the game
+            #self.games_list[index].forfeit
+
+            #remove the player from players' list
+            Server.playing_list.remove(self);
+
         print ("Connection Lost");
+
+
+    #def lineReceived(self, line):
+        #TUTAJ!!!!!!!!!
+        #jezeli player is connected to a game
+        #find the Chessgame
+        #send the data to the game isinstance(
+        #else
+        #send out error
 
 
     #def dataReceived(self, data):

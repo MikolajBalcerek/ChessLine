@@ -22,6 +22,7 @@ class Chessgame:
 
     def __gameloop__(self):
         #this is the main gameloop
+        lastplayer = 1 #index of a player that made move last time
         playerturn=0; #index of player that is ought to make a move
 
         while (True):
@@ -29,8 +30,34 @@ class Chessgame:
             if (self.__isplayerconnected__(self.playerOne) and self.__isplayerconnected__(self.playerTwo)):
                 #sending board state to players
                 self.__newBoardState__();
-                #win conditions
-                #if not (self.board.is_game_over()):
+
+                #draw conditions
+                if not (self.board.is_stalemate()):
+                    if not (self.board.is_insufficient_material()):
+                        #has the game been won
+                        if not (self.board.is_checkmate()):
+                            #WE GET TO PLAY, HURRAY
+
+
+
+
+
+                            #changing turns
+                            playerturn = (playerturn + 1)%2;
+                            lastplayer = (lastplayer + 1)%2;
+
+                        else:
+                            #last player has won
+                            self.__declarewinner__(self.players[lastplayer, "Death by checkmate"]);
+                    else:
+                        #is a stalemate due to insufficient material
+                        self.__draw__("Insufficient material");
+
+                else:
+                    #is a stalemate
+                    self.__draw__("Stalemate");
+
+                #breaking out of the game loop
                 break;
 
             else:
@@ -46,13 +73,6 @@ class Chessgame:
 
 
 
-
-
-
-            playerturn = (playerturn + 1)%2;
-
-
-
     def __isplayerconnected__(self, player):
         if (player in self.chessserver.clients_list):
             return True;
@@ -63,8 +83,15 @@ class Chessgame:
     def __declarewinner__(self, player, reason):
         self.chessserver.__messageLIST__(player, "YOU WON!");
         self.chessserver.__messageLIST__(player, reason);
+        self.__gameover__();
 
-    #def __gameover__(self):
+    def __draw__(self, reason):
+        self.chessserver.__messageLIST__(self.players, "The game has ended in a draw.")
+        self.chessserver.__messageLIST__(self.players, reason);
+        self.__gameover__();
+
+    def __gameover__(self):
+        print ("The game has ended. ID = " + str(self.idonserver));
 
 
        # if(chess.isgameover)

@@ -32,7 +32,6 @@ class Server(basic.LineReceiver):
         for c in listofusers:
             c.sendLine(text);
 
-
     def __helloMessages__(self):
         #a bunch of on-login messages
         self.sendLine("Welcome to Chessline. Author: Mikolaj Balcerek, s416040");
@@ -114,13 +113,29 @@ class Server(basic.LineReceiver):
         print ("Connection Lost");
 
 
-    #def lineReceived(self, line):
-        #TUTAJ!!!!!!!!!
-        #jezeli player is connected to a game
-        #find the Chessgame
-        #send the data to the game isinstance(
-        #else
-        #send out error
+    def lineReceived(self, line):
+        #we got something from a client
+
+        #is the client playing in a game
+        if (self in self.playing_list):
+            # find the game's id
+            index = self.playing_list.index(self);
+            gameid = self.playing_list[index][0];
+            thegame = self.games_list[gameid];
+
+            #is it the player's turn
+            if (self == thegame.players[thegame.playerturn]):
+                #was the message legit
+                if(thegame.getmessage(line, self)):
+                    print (time.strftime("%H:%M") + " Legit command was received and processed");
+
+                else:
+                    #the message was somehow incorrect, sending special client side code to try again
+                    self.__messageLIST__(self, "TRYAGAIN");
+
+
+
+
 
 
     #def dataReceived(self, data):

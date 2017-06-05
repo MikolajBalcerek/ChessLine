@@ -7,7 +7,10 @@ import GameMode;
 import time;
 
 class ClientClient(basic.LineReceiver):
-    """Once connected, send a message, then print the result."""
+
+    def __init__(self):
+        self.game = 0;
+
 
     def connectionMade(self):
         #print "Connected to the server";
@@ -15,7 +18,13 @@ class ClientClient(basic.LineReceiver):
 
     def lineReceived(self, line):
         if (str(line) == "GAMEMODE"):
-            GameMode.initialize();
+            self.game = GameMode.Gamemode(self);
+        elif ((self.game != 0) and (str(line) == "YOUR MOVE")):
+            self.game.makeMove();
+        elif ((self.game != 0) and (str(line) == "TRYAGAIN")):
+            self.game.makeMove();
+        elif ((self.game !=0) and (str(line) == "GAMEOVER")):
+            self.game = 0;
         else:
             print(time.strftime("%H:%M Server: ") + line);
 

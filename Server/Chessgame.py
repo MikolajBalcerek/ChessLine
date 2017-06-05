@@ -43,13 +43,16 @@ class Chessgame:
                                 #WE GET TO PLAY, HURRAY
                                 #message the player of his turn
 
+                                print ("In game loop");
                                 messagereceivers = [];
-                                messagereceivers[0] = self.players[self.playerturn]
-                                self.chessserver.__messageLIST__(messagereceivers[0],"YOUR MOVE");
+                                messagereceivers.append(self.players[self.playerturn]);
+                                self.chessserver.__messageLIST__(messagereceivers,"YOUR MOVE");
+                                print ("after sending your move")
 
-                                while(self.thisTurnMoveMade == False):
+                                #while(self.thisTurnMoveMade == False):
                                     #waiting for a response
-                                    continue;
+
+                                    #continue;
 
 
 

@@ -29,6 +29,7 @@ class Server(basic.LineReceiver):
 
     def __messageLIST__(self, listofusers, text):
         #message privately everyone on the list
+
         for c in listofusers:
             c.sendLine(text);
 

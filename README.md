@@ -49,7 +49,7 @@ Your command: FORFEIT
 4. Run Chessline/Client/\_\_mainCLIENT\_\__.py
 5. Answer prompts (localhost for 127.0.0.1 or any valid ipv4, the port number from 3.)
 6. Repeat steps 4-5 as many times as you wish
-7. Wait to automatically matched
+7. Wait to be automatically matched
 8. Play chess using long algebraic notation ("e2e4") or type "FORFEIT" to give up
 
 ## Unfinished

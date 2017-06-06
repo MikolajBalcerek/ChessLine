@@ -79,8 +79,8 @@ class Server(basic.LineReceiver):
         print (time.strftime("%H:%M") + " Hosted a game. ID = " + str(idnumber));
 
         # Adding players to playing players list with the game's id
-        self.playing_list.append([__twoplayers__[0] , idnumber]);
-        self.playing_list.append([__twoplayers__[1], idnumber]);
+        Server.playing_list.append([__twoplayers__[0] , idnumber]);
+        Server.playing_list.append([__twoplayers__[1], idnumber]);
 
         #running the game
         Server.games_list.append(Chessgame.Chessgame(self, __twoplayers__, idnumber));
@@ -116,19 +116,25 @@ class Server(basic.LineReceiver):
 
     def lineReceived(self, line):
         #we got something from a client
+        print (time.strftime("%H:%M ") + "Received a message: " + str(line));
 
         #is the client playing in a game
-        if (self in self.playing_list):
-            # find the game's id
-            index = self.playing_list.index(self);
-            gameid = self.playing_list[index][0];
-            thegame = self.games_list[gameid];
+        if (any(self in sublist for sublist in Server.playing_list)):
 
-            #is it the player's turn
-            if (self == thegame.players[thegame.playerturn]):
+            # find the game's id
+            for playerandgame in Server.playing_list:
+                #tutaj blad, szukam gameid zeby znalezc thegame gdzie jest gracz
+                if(self in playerandgame):
+                    gameid = playerandgame[1];
+                    thegame = Server.games_list[gameid];
+
+            #is it the player's turn and the game hasn't ended
+            if (self == thegame.players[thegame.playerturn] and (thegame.gameover == False)):
                 #was the message legit
                 if(thegame.getmessage(line, self)):
                     print (time.strftime("%H:%M") + " Legit command was received and processed");
+                    #Engange the next turn function
+                    thegame.__AfterMove__();
 
                 else:
                     #the message was somehow incorrect, sending special client side code to try again

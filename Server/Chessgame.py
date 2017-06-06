@@ -14,7 +14,9 @@ class Chessgame:
         self.idonserver = idnumber;
         self.board = chess.Board();
         self.gameover = False;
-        self.__gameloop__();
+        self.playerturn = 0;  # index of player that is ought to make a move
+        self.lastplayer = 1; #index of a player that made move last time
+        self.__firstTurn__();
 
     def __newBoardState__(self):
         #This sends out the board state to both players
@@ -23,70 +25,60 @@ class Chessgame:
         print (self.board);
 
 
-    def __gameloop__(self):
-        #this is the main gameloop
-        lastplayer = 1 #index of a player that made move last time
-        self.playerturn=0; #index of player that is ought to make a move
 
-        while (True):
-            #When both players are connected
-            if (self.__isplayerconnected__(self.playerOne) and self.__isplayerconnected__(self.playerTwo)):
-                #sending board state to players
-                self.__newBoardState__();
-
-                #draw conditions
-                if not (self.board.is_stalemate()):
-                    if not (self.board.is_insufficient_material()):
-                        #has the game been won
-                        if not (self.board.is_checkmate()):
-                            if not (self.gameover):
-                                #WE GET TO PLAY, HURRAY
-                                #message the player of his turn
-
-                                print ("In game loop");
-                                messagereceivers = [];
-                                messagereceivers.append(self.players[self.playerturn]);
-                                self.chessserver.__messageLIST__(messagereceivers,"YOUR MOVE");
-                                print ("after sending your move")
-
-                                #while(self.thisTurnMoveMade == False):
-                                    #waiting for a response
-
-                                    #continue;
+    def __firstTurn__(self):
+        self.playerturn = 0;  # index of player that is ought to make a move
+        self.lastplayer = 1;  # index of a player that made move last time
+        self.__newBoardState__();
+        messagereceivers = [];
+        messagereceivers.append(self.players[self.playerturn]);
+        self.chessserver.__messageLIST__(messagereceivers, "YOUR MOVE");
+        print (time.strftime("%H:%M") + " Waiting for a move from player, game ID = " + str(self.idonserver));
 
 
+    def __AfterMove__(self):
+        #Verify if both players are still connected
+        if (self.__isplayerconnected__(self.playerOne) and self.__isplayerconnected__(self.playerTwo)):
+            #draw conditions
+            if not (self.board.is_stalemate()):
+                if not (self.board.is_insufficient_material()):
+                    #has the game been won
+                    if not (self.board.is_checkmate()):
+                        if not (self.gameover):
+                            #WE GET TO PLAY, HURRAY
+                            # sending board state to players
+                            self.__newBoardState__();
 
+                            # changing turns
+                            self.thisTurnMoveMade = False;
+                            self.playerturn = (self.playerturn + 1) % 2;
+                            self.lastplayer = (self.lastplayer + 1) % 2;
 
+                            #message next player of his turn
+                            messagereceivers = [];
+                            messagereceivers.append(self.players[self.playerturn]);
+                            self.chessserver.__messageLIST__(messagereceivers,"YOUR MOVE");
 
-                                #changing turns
-                                self.thisTurnMoveMade = False;
-                                self.playerturn = (self.playerturn + 1)%2;
-                                lastplayer = (lastplayer + 1)%2;
-
-                        else:
-                            #last player has won
-                            self.__declarewinner__(self.players[lastplayer, "Death by checkmate"]);
                     else:
-                        #is a stalemate due to insufficient material
-                        self.__draw__("Insufficient material");
-
+                        #last player has won
+                        self.__declarewinner__(self.players[self.lastplayer, "Death by checkmate"]);
                 else:
-                    #is a stalemate
-                    self.__draw__("Stalemate");
-
-                #breaking out of the game loop
-                break;
+                    #is a stalemate due to insufficient material
+                    self.__draw__("Insufficient material");
 
             else:
-                #one of the players has disconnected
-                #declaring winners
-                if not (self.__isplayerconnected__(self.playerOne)):
-                    self.__declarewinner__(self.playerTwo, "Your opponent has disconnected");
-                else:
-                    self.__declarewinner__(self.playerOne, "Your opponent has disconnected");
+                 #is a stalemate
+                self.__draw__("Stalemate");
 
-                #breaking out of the game loop
-                break;
+
+        else:
+            #one of the players has disconnected
+            #declaring winners
+            if not (self.__isplayerconnected__(self.playerOne)):
+                self.__declarewinner__(self.playerTwo, "Your opponent has disconnected");
+            else:
+                self.__declarewinner__(self.playerOne, "Your opponent has disconnected");
+
 
 
 
@@ -99,8 +91,10 @@ class Chessgame:
 
 
     def __declarewinner__(self, player, reason):
-        self.chessserver.__messageLIST__(player, "YOU WON!");
-        self.chessserver.__messageLIST__(player, reason);
+        list = [];
+        list.append(player)
+        self.chessserver.__messageLIST__(list, "YOU WON!");
+        self.chessserver.__messageLIST__(list, reason);
         self.__gameover__();
 
     def __draw__(self, reason):
@@ -112,16 +106,19 @@ class Chessgame:
         print ("The game has ended. ID = " + str(self.idonserver));
         self.chessserver.__messageLIST__(self.players, "GAMEOVER");
         self.gameover = True;
+        #remove the players from playing list
+        #add the players to waiting list
+        #remove the game from the gameslist
 
 
     def getmessage(self, message, player):
         #processes messages and return True/False depending if it was valid
         if (str(message) == "FORFEIT"):
             if(player == self.players[0]):
-                self.__declarewinner__(self, self.players[1]);
+                self.__declarewinner__(self.players[1], "The opposite player has forfeited the game");
                 return True;
             else:
-                self.__declarewinner__(self, self.players[0]);
+                self.__declarewinner__(self.players[0], "The opposite player has forfeited the game");
                 return True;
 
         elif (self.__verifymove__(message) == True):
@@ -140,12 +137,6 @@ class Chessgame:
         #Makes the move on the board
         self.thisTurnMoveMade = True;
         print "Pasdasd";
-
-
-       # if(chess.isgameover)
-            #you won
-            #you lost
-            #remove the game and players and return them to lobbby as matchmaking players
 
 
 

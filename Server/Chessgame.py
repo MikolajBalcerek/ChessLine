@@ -122,10 +122,14 @@ class Chessgame:
         #processes messages and return True/False depending if it was valid
         if (str(message) == "FORFEIT"):
             if(player == self.players[0]):
-                self.__declarewinner__(self.players[1], "The opposite player has forfeited the game");
+                list = [];
+                list.append(self.players[1]);
+                self.__declarewinner__(list, "The opposite player has forfeited the game");
                 return True;
             else:
-                self.__declarewinner__(self.players[0], "The opposite player has forfeited the game");
+                list = [];
+                list.append(self.players[0]);
+                self.__declarewinner__(list, "The opposite player has forfeited the game");
                 return True;
 
         elif (self.__verifymove__(message) == True):

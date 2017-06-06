@@ -138,7 +138,9 @@ class Server(basic.LineReceiver):
 
                 else:
                     #the message was somehow incorrect, sending special client side code to try again
-                    self.__messageLIST__(self, "TRYAGAIN");
+                    list = [];
+                    list.append(self);
+                    self.__messageLIST__(list, "TRYAGAIN");
 
 
 

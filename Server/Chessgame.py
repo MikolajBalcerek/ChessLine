@@ -60,8 +60,8 @@ class Chessgame:
                             self.chessserver.__messageLIST__(messagereceivers,"YOUR MOVE");
 
                     else:
-                        #last player has won
-                        self.__declarewinner__(self.players[self.lastplayer, "Death by checkmate"]);
+                        #player who mae the last move won
+                        self.__declarewinner__(self.players[self.playerturn, "Checkmate"]);
                 else:
                     #is a stalemate due to insufficient material
                     self.__draw__("Insufficient material");
@@ -125,18 +125,28 @@ class Chessgame:
             self.__makemove__(message);
             return True;
         else:
-            self.chessserver.__messageLIST__(player, "Incorrect command, try again")
+            list = [];
+            list.append(player);
+            self.chessserver.__messageLIST__(list, "Incorrect command, try again")
             return False;
 
 
     def __verifymove__(self, message):
         #verifies moves
-        return True;
+        try:
+            if (chess.Move.from_uci(message) in self.board.legal_moves):
+                return True;
+            else:
+
+                return False;
+        except (ValueError, IndexError) as wrongformatorillegalmove:
+            return False;
+
 
     def __makemove__(self, message):
         #Makes the move on the board
+        self.board.push_uci(message);
         self.thisTurnMoveMade = True;
-        print "Pasdasd";
 
 
 

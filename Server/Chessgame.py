@@ -60,8 +60,13 @@ class Chessgame:
                             self.chessserver.__messageLIST__(messagereceivers,"YOUR MOVE");
 
                     else:
-                        #player who mae the last move won
-                        self.__declarewinner__(self.players[self.playerturn, "Checkmate"]);
+                        #player who made the last move won
+                        list = [];
+                        list.append(self.players[self.playerturn]);
+                        listtwo = [];
+                        listtwo.append(self.players[self.lastplayer]);
+                        self.__declareloser__(listtwo, "Checkmate");
+                        self.__declarewinner__(list, "Checkmate");
                 else:
                     #is a stalemate due to insufficient material
                     self.__draw__("Insufficient material");
@@ -91,11 +96,13 @@ class Chessgame:
 
 
     def __declarewinner__(self, player, reason):
-        list = [];
-        list.append(player)
-        self.chessserver.__messageLIST__(list, "YOU WON!");
-        self.chessserver.__messageLIST__(list, reason);
+        self.chessserver.__messageLIST__(player, "YOU WON!");
+        self.chessserver.__messageLIST__(player, reason);
         self.__gameover__();
+
+    def __declareloser__(self, player, reason):
+        self.chessserver.__messageLIST__(player, "YOU LOST!");
+        self.chessserver.__messageLIST__(player, reason);
 
     def __draw__(self, reason):
         self.chessserver.__messageLIST__(self.players, "The game has ended in a draw.")

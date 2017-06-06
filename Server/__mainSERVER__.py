@@ -6,7 +6,7 @@ import time;
 
 def main():
     #Ask user for setup data
-    #SetupTalk.converse_initial_setup();
+    SetupTalk.converse_initial_setup();
 
     #run the server
     factory = protocol.ServerFactory()

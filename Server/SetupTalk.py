@@ -5,9 +5,9 @@ portnumber = 8080;
 
 def converse_initial_setup():
     print "Setting up the server.."
-    address = raw_input("Name the ip address you wish to bind the server to //gethostname: \n");
-    while(__verify_adress__(address) == False):
-        address = raw_input("Enter a correct ipv4 address: \n");
+    #address = raw_input("Name the ip address you wish to bind the server to //gethostname: \n");
+    #while(__verify_adress__(address) == False):
+        #address = raw_input("Enter a correct ipv4 address: \n");
 
     portnumber = raw_input("Name the port number to listen on: \n");
     while (__verify_adress__(portnumber) == False):

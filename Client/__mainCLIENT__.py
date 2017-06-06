@@ -6,12 +6,11 @@ import ClientClient;
 import time;
 
 
-# this connects the protocol to a server running on port 8000
 def main():
     #Get data from user
-    #SetupTalkClient.converse_initial_setup();
+    SetupTalkClient.converse_initial_setup();
     f = ClientFactory.ClientFactory()
-    reactor.connectTCP("localhost", SetupTalkClient.portnumber, f)
+    reactor.connectTCP(str(SetupTalkClient.address), SetupTalkClient.portnumber, f)
     reactor.run()
 
 

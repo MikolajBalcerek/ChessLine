@@ -1,12 +1,12 @@
 import socket;
 
-address = 0;
+address = "127.0.0.1";
 portnumber = 8080;
 
 
 def converse_initial_setup():
     print "Setting up the client..";
-    address = raw_input("Name the ip address you wish to connect to \n");
+    address = raw_input("Name the ip address you wish to connect to: \n");
     while(__verify_adress__(address) == False):
         address = raw_input("Enter a correct ipv4 address: \n");
 
@@ -15,11 +15,15 @@ def converse_initial_setup():
         portnumber = raw_input("Enter a correct port number: \n");
 
 def __verify_adress__(address):
-    try:
-        socket.inet_aton(address)
+    if (str(address) == "localhost"):
+        address = "127.0.0.1";
         return True;
-    except socket.error:
-        return False;
+    else:
+        try:
+            socket.inet_aton(address)
+            return True;
+        except socket.error:
+            return False;
 
 def __verify_portnumber__(portnumber):
     try:

@@ -99,19 +99,17 @@ class Server(basic.LineReceiver):
             Server.waiting_list.remove(self);
             Server.matchmakingplayers = Server.matchmakingplayers - 1;
 
-        #Disconnected player was in a game
-        if (self in self.playing_list):
-            #find the game's id
-            index = self.playing_list.index(self);
-            gameid = self.playing_list[index][0];
+        #Disconnected player was in a game, checking
+        for playerandgame in Server.playing_list:
+            if (self in playerandgame):
+                print ("Player in a chess game has disconnected");
+                gameid = playerandgame[1];
+                thegame = Server.games_list[gameid]
+                #inform the game
+                thegame.playerDisconnected(self);
+                Server.playing_list.remove([self, gameid]);
 
-            #inform the game
-            #self.games_list[index].forfeit
-
-            #remove the player from players' list
-            Server.playing_list.remove(self);
-
-        print ("Connection Lost");
+        print ("Connection Lost and handled by the server");
 
 
     def lineReceived(self, line):
@@ -123,7 +121,6 @@ class Server(basic.LineReceiver):
 
             # find the game's id
             for playerandgame in Server.playing_list:
-                #tutaj blad, szukam gameid zeby znalezc thegame gdzie jest gracz
                 if(self in playerandgame):
                     gameid = playerandgame[1];
                     thegame = Server.games_list[gameid];

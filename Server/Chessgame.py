@@ -109,6 +109,18 @@ class Chessgame:
         self.chessserver.__messageLIST__(self.players, reason);
         self.__gameover__();
 
+    def playerDisconnected(self, player):
+        if (self.playerOne == player):
+            list = [];
+            list.append(self.playerTwo);
+            self.__declarewinner__(list, "Your opponent has disconnected");
+        elif (self.playerTwo == player):
+            list = [];
+            list.append(self.playerOne);
+            self.__declarewinner__(list, "Your opponent has disconnected");
+
+
+
     def __gameover__(self):
         print ("The game has ended. ID = " + str(self.idonserver));
         self.chessserver.__messageLIST__(self.players, "GAMEOVER");

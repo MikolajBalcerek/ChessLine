@@ -80,18 +80,22 @@ class Chessgame:
             #one of the players has disconnected
             #declaring winners
             if not (self.__isplayerconnected__(self.playerOne)):
-                self.__declarewinner__(self.playerTwo, "Your opponent has disconnected");
+                list = [];
+                list.append(self.playerTwo);
+                self.__declarewinner__(list, "Your opponent has disconnected");
             else:
-                self.__declarewinner__(self.playerOne, "Your opponent has disconnected");
+                list = [];
+                list.append(self.playerOne);
+                self.__declarewinner__(list, "Your opponent has disconnected");
 
 
 
 
     def __isplayerconnected__(self, player):
-        if (player in self.chessserver.clients_list):
+        if (player in Server.Server.clients_list):
             return True;
         else:
-            self.players.pop(player);
+            self.players.remove(player);
             return False;
 
 
@@ -125,9 +129,32 @@ class Chessgame:
         print ("The game has ended. ID = " + str(self.idonserver));
         self.chessserver.__messageLIST__(self.players, "GAMEOVER");
         self.gameover = True;
-        #remove the players from playing list
-        #add the players to waiting list
-        #remove the game from the gameslist
+
+        thegame = 0;
+        # remove the players from playing list
+        for player in self.players:
+            for playerandgame in self.chessserver.playing_list:
+                if (player in playerandgame):
+                    gameid = playerandgame[1];
+                    thegame = Server.Server.games_list[gameid]
+                    Server.Server.playing_list.remove([player, gameid]);
+                    print (time.strftime("%H:%M ") + "Removed an in-game player from the players' list");
+
+        #remove the game from games list
+        Server.Server.games_list.remove(thegame);
+        print (time.strftime("%H:%M") + " Removed a finished game from gamelist");
+
+
+        #add the players to waiting list, maintain numbers and run matchmaking (since we're adding new players)
+        for player in self.players:
+            Server.Server.waiting_list.append(player);
+            list = [];
+            list.append(player);
+            self.chessserver.__messageLIST__(list, "You have been put in the matchmaking lobby again but won't be able to play the same opponent.");
+            #maintaining numbers
+            Server.Server.matchmakingplayers = Server.Server.matchmakingplayers + 1;
+            Server.Server.playingplayers =  Server.Server.playingplayers - 1;
+
 
 
     def getmessage(self, message, player):

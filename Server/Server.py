@@ -20,10 +20,11 @@ class Server(basic.LineReceiver):
         print (time.strftime("%H:%M") + " New connection made");
         Server.clients_list.append(self);
         Server.connectedplayers = Server.connectedplayers + 1;
-        Server.matchmakingplayers = Server.connectedplayers - Server.playingplayers;
+        Server.matchmakingplayers = Server.matchmakingplayers + 1;
         self.__helloMessages__()
         self.__messageLIST__(Server.waiting_list, "New player has connected and wants to play!");
-        Server.waiting_list.append(self);
+        #Server.waiting_list.append(self);
+        Server.waiting_list.insert(0, self);
         self.__matchMaking__();
 
 
@@ -107,7 +108,12 @@ class Server(basic.LineReceiver):
                 thegame = Server.games_list[gameid]
                 #inform the game
                 thegame.playerDisconnected(self);
-                Server.playing_list.remove([self, gameid]);
+                #if player is still on the list
+                try:
+                    Server.playing_list.remove([self, gameid]);
+                except ValueError:
+                    #player was already removed
+                    pass;
 
         print ("Connection Lost and handled by the server");
 

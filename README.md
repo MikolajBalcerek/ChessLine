@@ -56,5 +56,6 @@ Your command: FORFEIT
 8. Play chess using long algebraic notation ("e2e4") or type "FORFEIT" to give up
 
 ## Unfinished and known bugs
-- Waiting players count gets messed up after series of disconnects and returns to the lobby, however the matchmaking functionality still persists
+- Waiting players count gets messed up after series of disconnects and returns to the lobby, however the matchmaking functionality still persists  
+- Players who have already played avoid repeated pairs too aggressively and require new players to move the queue once all options are exhausted (add calling matchmaking with extended repeated pairs rules after returning veteran players to the lobby)
 

@@ -13,7 +13,7 @@ Version: 0.2, mostly stable
 - Handling disconnects at any stage
 - Matching pairs of players automatically
 - Play chess using long algebraic notation ("e2e4")
-- Returning players to the lobby after the game has finished and shuffling so there are mostly no repeat games (new players have priority to play)
+- Returning players to the lobby after the game has finished and shuffling (new players have priority to play)
 - Move and validation
 - Draws, stalemates and other game-ending conditions (e.g. insufficient material)
 - Forfeiting (type: FORFEIT)
@@ -57,5 +57,5 @@ Your command: FORFEIT
 
 ## Unfinished and known bugs
 - Waiting players count gets messed up after series of disconnects and returns to the lobby, however the matchmaking functionality still persists  
-- Players who have already played avoid repeated pairs too aggressively and require new players to move the queue once all options are exhausted (add calling matchmaking with extended repeated pairs rules after returning veteran players to the lobby)
+- Players who have already played avoid repeated pairs too aggressively and require new players to move the queue once all options are exhausted (add calling matchmaking with extended repeated pairs rules after returning veteran players to the lobby in \_\_gameover\_\_ function)
 

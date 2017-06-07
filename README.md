@@ -3,7 +3,7 @@ Chess Server and Client implementation based on Twisted + python-chess
 Python 2.7+  
 Written for Computer Networks course, 2016/2017  
 Author: Mikołaj Balcerek, s416040
-Version: 0.2, mostly stable
+Version: 0.2, mostly stable  
 ++returning to lobby and shuffling
 
 ## Features

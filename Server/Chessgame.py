@@ -161,8 +161,8 @@ class Chessgame:
         for player in self.players:
             listtwo = [];
             listtwo.append(player);
-            player.__messageLIST__(listtwo, "WAITINGMATCH");
             player.__messageLIST__(listtwo, "Type in MATCH to be matched again immediately.");
+            player.__messageLIST__(listtwo, "WAITINGMATCH");
 
     def getmessage(self, message, player):
         #processes messages and return True/False depending if it was valid

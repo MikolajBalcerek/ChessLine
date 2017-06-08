@@ -14,7 +14,7 @@ Version: 0.3, mostly stable
 - Matching pairs of players automatically
 - Play chess using long algebraic notation ("e2e4")
 - Returning players to the lobby after the game has finished and shuffling (new players have priority to play)
-- Veteran players can choose to avoid further automatic matchmaking
+- Veteran players can choose to avoid further automatic matchmaking (type in MATCH or answer yes after your game has ended)
 - Move and validation
 - Draws, stalemates and other game-ending conditions (e.g. insufficient material)
 - Forfeiting (type: FORFEIT)
@@ -23,17 +23,15 @@ Version: 0.3, mostly stable
 
 ## Example
 ```
-21:39 Server: Welcome to Chessline. Author: Mikolaj Balcerek, s416040
-21:39 Server: Server time: 21:39
-21:39 Server: Connected players: 3
-21:39 Server: Available players for matchmaking: 1
-21:39 Server: Please wait to be matched with another player
-21:40 Server: New player has connected and wants to play!
-21:40 Server: Found a pair.. Connecting
+23:46 Server: Welcome to Chessline. Author: Mikolaj Balcerek, s416040
+23:46 Server: Server time: 23:46
+23:46 Server: Connected players: 2
+23:46 Server: Available players for matchmaking: 2
+23:46 Server: Found a pair.. Connecting
 -------------------------------------------------------
-21:40 You: Type FORFEIT to surrender
-21:40 You: Type moves in UCI, long algebraic notation, e.g e2e4
-21:40 Server:
+23:46 You: Type FORFEIT to surrender
+23:46 You: Type moves in UCI, long algebraic notation, e.g e2e4
+23:46 Server:
 r n b q k b n r
 p p p p p p p p
 . . . . . . . .
@@ -42,8 +40,13 @@ p p p p p p p p
 . . . . . . . .
 P P P P P P P P
 R N B Q K B N R
-21:40 You: It's time for you to make a move or issue a command!
+23:46 You: It's time for you to make a move or issue a command!
 Your command: FORFEIT
+23:46 You: Sent!
+23:46 You: You have forfeited the game
+23:46 Server: You have been put in the matchmaking lobby again but won't be able to play the same opponent.
+23:46 You: Do you want join the waiting queue and force matchmaking immediately (allow for repeat opponents)?
+Yes
 ```
 
 ### Running Chessline
@@ -55,7 +58,7 @@ Your command: FORFEIT
 6. Repeat steps 4-5 as many times as you wish
 7. Wait to be automatically matched
 8. Play chess using long algebraic notation ("e2e4") or type "FORFEIT" to give up
-
+9. Type MATCH or answer yes to mark yourself as ready for the next game.
 ## Unfinished and known bugs
 -
 

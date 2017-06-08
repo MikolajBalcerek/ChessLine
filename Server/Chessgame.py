@@ -144,18 +144,25 @@ class Chessgame:
         Server.Server.games_list.remove(thegame);
         print (time.strftime("%H:%M") + " Removed a finished game from gamelist");
 
+        self.returnToLobbyAfterGame();
 
-        #add the players to waiting list, maintain numbers and run matchmaking (since we're adding new players)
+    def returnToLobbyAfterGame(self):
+        # add the players to waiting list, maintain numbers and run matchmaking (since we're adding new players)
         for player in self.players:
-            Server.Server.waiting_list.append(player);
+            #Server.Server.waiting_list.append(player);
             list = [];
             list.append(player);
             self.chessserver.__messageLIST__(list, "You have been put in the matchmaking lobby again but won't be able to play the same opponent.");
-            #maintaining numbers
-            Server.Server.matchmakingplayers = Server.Server.matchmakingplayers + 1;
-            Server.Server.playingplayers =  Server.Server.playingplayers - 1;
+            # maintaining numbers
+            #Server.Server.matchmakingplayers = Server.Server.matchmakingplayers + 1;
+            Server.Server.playingplayers = Server.Server.playingplayers - 1;
 
-
+        #SPECIAL COMMAND CODE to clients
+        for player in self.players:
+            listtwo = [];
+            listtwo.append(player);
+            player.__messageLIST__(listtwo, "WAITINGMATCH");
+            player.__messageLIST__(listtwo, "Type in MATCH to be matched again immediately.");
 
     def getmessage(self, message, player):
         #processes messages and return True/False depending if it was valid

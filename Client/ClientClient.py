@@ -25,6 +25,12 @@ class ClientClient(basic.LineReceiver):
             self.game.makeMove();
         elif ((self.game !=0) and (str(line) == "GAMEOVER")):
             self.game = 0;
+        elif ((self.game == 0) and (str(line) == "WAITINGMATCH")):
+            #when the player has played and decides whether to join the matchmaking
+            self.game = 0;
+            response = raw_input(time.strftime("%H:%M You:") + " Do you want join the waiting queue and force matchmaking immediately (allow for repeat opponents)? \n");
+            if ((str(response) == "MATCH") or (str(response) == "y") or (str(response) == "YES") or (str(response) == "Y") or (str(response) == "Yes") or (str(response) == "yes")):
+                self.sendLine("MATCH"); #command code to the server
         else:
             print(time.strftime("%H:%M Server: ") + line);
 

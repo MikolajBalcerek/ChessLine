@@ -145,8 +145,11 @@ class Server(basic.LineReceiver):
                     list.append(self);
                     self.__messageLIST__(list, "TRYAGAIN");
 
-
-
+        #the client is in the lobby but after having played the game
+        elif (str(line) == "MATCH") and not (self in Server.waiting_list):
+            Server.waiting_list.append(self);
+            Server.matchmakingplayers = Server.matchmakingplayers + 1;
+            Server.__matchMaking__(self);
 
 
 
